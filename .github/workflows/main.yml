@@ -39,14 +39,16 @@ jobs:
       # Install all the app dependencies
       - name: Install dependencies
         run: pip3 install -r requirements.txt
-        env:
-          SECRET_KEY : ${{secrets.DJANGO_SECRET_KEY}}
 
       # Build the app and run tests
       - name: Build and Run Test
         run: . venv/bin/activate && pytest
         env:
           SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
+          DB_USER: ${{secrets.DB_USER}}
+          DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+          DB_HOST: ${{secrets.DB_HOST}}
+          DB_PORT: ${{secrets.DB_PORT}}
 
       - name: Create Zipfile archive of Dependencies
         run: |
