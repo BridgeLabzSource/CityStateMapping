@@ -49,8 +49,8 @@ jobs:
         run: |
           cd ./venv/lib/python3.7/site-packages
           zip -r9 ../../../../api.zip .
-      - name: Add app to Zipfile
-        run: cd ./app && zip -g ../api.zip -r .
+      - name: Add CityStateMap to Zipfile
+        run: cd ./CityStateMap && zip -g ../api.zip -r .
 
       - name: Upload zip file artifact
         uses: actions/upload-artifact@v2
