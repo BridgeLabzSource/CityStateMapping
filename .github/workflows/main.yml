@@ -40,6 +40,14 @@ jobs:
       - name: Install dependencies
         run: pip3 install -r requirements.txt
 
+      # Set the env variables
+      - name: Set the env variables
+        run:|
+          echo "{DEBUG}={True}" >> $GITHUB_ENV
+          echo "{SECRET_KEY} = {'django-insecure-d-o69-3z-064jd))ue^mv6q=pinkd+n-v-_#jzf3h=&7t)et3&'}" >> $GITHUB_ENV
+          echo "{DB_USER}={'postgres'}">> $GITHUB_ENV
+          echo "{DB_PASSWORD}={'postgres'}" >> $GITHUB_ENV
+          echo "{DB_PORT}={5432}" >> $GITHUB_ENV
 
       # Build the app and run tests
       - name: Build and Run Test
