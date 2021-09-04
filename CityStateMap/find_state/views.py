@@ -7,6 +7,7 @@ import googlemaps
 from find_state.spelling_checker import check_spelling
 from fastapi import APIRouter
 from find_state.models import City
+from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
@@ -20,13 +21,14 @@ def get_state(city: City):
             geo_locator = Nominatim(user_agent="geoapiExercises")
             location = geo_locator.geocode(correct_city_name, addressdetails=True)
             # print(location.raw)
-            return location.raw['address']['state']
+            return Response({"message":"state retrived successfully","data":location.raw['address']['state']})
         else:
             raise KeyError
     except KeyError as exception:
-        return f"give a proper city name"
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content="give a proper city name")
     except Exception as exception:
-        return f"error occurred due to {exception.__str__()}"
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN,
+                            content=f"error occurred due to {exception.__str__()}")
 
 
 class FindStateView(APIView):

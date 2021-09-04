@@ -51,15 +51,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'CityStateMap.urls'
 
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EMAILBACKEND'
+
 DEFAULT_TABLESPACE = ""
 
 ABSOLUTE_URL_OVERRIDES = {}
 
 AUTH_USER_MODEL = 'auth.User'
 
-LOCALE_PATHS=[]
+LOCALE_PATHS = []
 
-BACKEND_CORS_ORIGINS="http://127.0.0.1:8000"
+BACKEND_CORS_ORIGINS = "http://127.0.0.1:8000"
 
 TEMPLATES = [
     {
