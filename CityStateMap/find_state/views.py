@@ -17,15 +17,16 @@ def get_state(city: City):
     try:
         if len(city.city_name) > 0 and city.city_name.isalpha():
             correct_city_name = check_spelling(city.city_name)
-            print(correct_city_name)
             geo_locator = Nominatim(user_agent="geoapiExercises")
             location = geo_locator.geocode(correct_city_name, addressdetails=True)
             # print(location.raw)
-            return Response({"message":"state retrived successfully","data":location.raw['address']['state']})
+            return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "state is retrieved successfully",
+                                                                         "city": correct_city_name[1],
+                                                                         "state": location.raw['address']['state']})
         else:
             raise KeyError
     except KeyError as exception:
-        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content="give a proper city name")
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content="give a proper city name")
     except Exception as exception:
         return JSONResponse(status_code=status.HTTP_403_FORBIDDEN,
                             content=f"error occurred due to {exception.__str__()}")
