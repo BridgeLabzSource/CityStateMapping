@@ -21,7 +21,7 @@ def get_state(city: City):
             geo_locator = Nominatim(user_agent="geoapiExercises")
             location = geo_locator.geocode(correct_city_name, addressdetails=True)
             # print(location.raw)
-            return Response({"message":"state retrived successfully","data":location.raw['address']['state']})
+            return JSONResponse(status_code=status.HTTP_200_OK,content=f"State:- {location.raw['address']['state']}")
         else:
             raise KeyError
     except KeyError as exception:
