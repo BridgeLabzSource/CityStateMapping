@@ -10,12 +10,14 @@ class TestFastApiFunction:
     def test_get_state_name_for_given_city_name(self):
         data = {"city_name": "Pune"}
         response = client.post("/states/", json=data)
-        assert response.status_code ==200 and response.json()['data']['data']=="Maharashtra"
+        data=json.loads(response.content)
+        assert response.status_code ==200 and data['state']=="Maharashtra"
 
     def test_state_name_with_misspelled_city_name(self):
         data = {"city_name": "dlh"}
         response = client.post("/states/", json=data)
-        assert response.status_code == 200 and response.json()['data']['data'] == "Delhi"
+        data=json.loads(response.content)
+        assert response.status_code == 200 and data['state'] == "Delhi"
 
     def test_state_name_with_empty_city_name(self):
         data = {"city_name": ""}
