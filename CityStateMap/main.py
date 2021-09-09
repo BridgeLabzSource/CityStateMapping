@@ -34,4 +34,7 @@ app.include_router(api_router)
 handler = Mangum(app=app)
 
 if __name__ == "__main__":
+    """
+    Starts the uvicorn server at the given host and port 
+    """
     uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="info")
