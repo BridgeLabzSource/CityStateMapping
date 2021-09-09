@@ -6,14 +6,20 @@ from geopy.geocoders import Nominatim
 import googlemaps
 from find_state.spelling_checker import check_spelling
 from fastapi import APIRouter
-from find_state.models import City
+from find_state.models import City, Location
 from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
 
-@router.post("/states/")
-def get_state(city: City):
+@router.post("/state-by-city/")
+def get_state_by_city(city: City):
+    """
+    The function is used to retrieve the state to which a given city belongs by using Nominatim to get the state and
+    using nltk to correct the spelling of city name if its incorrect according to the best possible suggestion
+    :param city: City object with city_name as data member, provided in the request by user
+    :return: state name to which the given city belongs
+    """
     try:
         if len(city.city_name) > 0 and city.city_name.isalpha():
             correct_city_name = check_spelling(city.city_name)
@@ -27,6 +33,24 @@ def get_state(city: City):
             raise KeyError
     except KeyError as exception:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content="give a proper city name")
+    except Exception as exception:
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN,
+                            content=f"error occurred due to {exception.__str__()}")
+
+
+@router.post("/state-by-location/")
+def get_state_by_location(location: Location):
+    """
+    The function is used to retrieve the state for given latitude and longitude (as one string separated using comma) by
+    using Nominatim to get the appropriate state else appropriate exception will be thrown
+    :param location: location object with latitude_longitude as data member which is provided in the request by the user
+    :return: state name to which the given coordinates belong
+    """
+    try:
+        geo_locator = Nominatim(user_agent="geoapiExercises")
+        location = geo_locator.reverse(location.latitude_longitude, exactly_one=True)
+        return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "state is retrieved successfully",
+                                                                     "state": location.raw['address']['state']})
     except Exception as exception:
         return JSONResponse(status_code=status.HTTP_403_FORBIDDEN,
                             content=f"error occurred due to {exception.__str__()}")
