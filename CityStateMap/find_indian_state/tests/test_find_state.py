@@ -1,6 +1,6 @@
 import unittest
 
-from find_state.views import FindState
+from find_indian_state.views import FindState
 
 
 class TestFindState(unittest.TestCase):
