@@ -19,6 +19,11 @@ class TestFindState(unittest.TestCase):
         response = FindState.get_state_by_city(city_name)
         self.assertEqual("Please enter some city name", response)
 
+    def test_get_state_with_numeric_string_as_city_name(self):
+        city_name = "122435"
+        response = FindState.get_state_by_city(city_name)
+        self.assertEqual("Please enter some city name", response)
+
     def test_get_state_with_given_coordinates(self):
         latitude="12.9716° N"
         longitude="77.5946° E"

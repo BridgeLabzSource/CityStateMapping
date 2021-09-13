@@ -16,7 +16,7 @@ class FindState:
         :return:- state name else appropriate exception will be thrown in the response
         """
         try:
-            if len(city_name) == 0:
+            if len(city_name) == 0 or not city_name.isalpha():
                 raise KeyError
             else:
                 correct_city_name = check_spelling(city_name)
