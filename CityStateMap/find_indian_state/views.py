@@ -31,7 +31,7 @@ class FindState:
                 raise KeyError
             else:
                 correct_city_name = check_spelling(city_name)
-                geo_locator = Nominatim(user_agent="geoapiExercises")
+                geo_locator = Nominatim(user_agent="geopy_exercise")
                 location = geo_locator.geocode(correct_city_name, addressdetails=True, exactly_one=True)
                 return location.raw['address']['state']
         except KeyError as exception:
@@ -48,7 +48,7 @@ class FindState:
                 raise KeyError
             else:
                 coordinates = latitude + "," + longitude
-                geo_locator = Nominatim(user_agent="geoapiExercises")
+                geo_locator = Nominatim(user_agent="geoapi_exercises")
                 location = geo_locator.reverse(coordinates, exactly_one=True)
                 return location.raw['address']['state']
         except KeyError as exception:
