@@ -41,4 +41,7 @@ indian_cities = ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Ahmedabad", "Chen
 
 
 def get_cities_name():
+    """
+    Function is used to return the list containing the correctly spelled cities name in india
+    """
     return indian_cities

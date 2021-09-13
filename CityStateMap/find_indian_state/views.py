@@ -12,7 +12,8 @@ logger.addHandler(log_handlers['file_debug'])
 
 class FindState:
     """
-    View handles the request to know the state of the given city name
+    class handles the request to know the state by either using the city name or by using coordinates whichever provided
+    by the user
     """
 
     def __init__(self):
@@ -21,8 +22,10 @@ class FindState:
     @staticmethod
     def get_state_by_city(city_name):
         """
-        Geopy library is used to send the request to Nominatim to get the state name of the given city name and
-        then output is converted to raw text to get the state name only
+        To retrieve the state name of the given city name provided by the user, request is made to the Nominatim library
+        using geopy with the correctly spelled city name, on success response with state name is returned else
+        appropriate exception will be returned. City name given by user is checked for any spelling mistake using nltk
+        and if there is any then best possible correctly spelled city name is used to retrieve the state
         :param city_name:- city name whose state is to be found
         :return:- state name else appropriate exception will be thrown in the response
         """
@@ -43,6 +46,13 @@ class FindState:
 
     @staticmethod
     def get_state_by_coordinates(latitude, longitude):
+        """
+        To get the state name from the latitude and longitude provided by the user, request is made to the Nominatim
+        library using geopy, on success response with state name is returned else appropriate exception will be returned
+        :param latitude:- latitude of location whose state is to be found
+        :param longitude:- longitude of location whose state is to be found
+        :return:- state name else appropriate exception will be thrown in the response
+        """
         try:
             if len(latitude) == 0 or len(longitude) == 0:
                 raise KeyError
