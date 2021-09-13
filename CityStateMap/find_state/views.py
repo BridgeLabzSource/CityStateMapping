@@ -1,91 +1,44 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.http import JsonResponse
 from geopy.geocoders import Nominatim
-import googlemaps
 from find_state.spelling_checker import check_spelling
-from fastapi import APIRouter
-from find_state.models import City, Location
-from fastapi.responses import JSONResponse
-
-router = APIRouter()
 
 
-@router.post("/state-by-city/")
-def get_state_by_city(city: City):
-    """
-    The function is used to retrieve the state to which a given city belongs by using Nominatim to get the state and
-    using nltk to correct the spelling of city name if its incorrect according to the best possible suggestion
-    :param city: City object with city_name as data member, provided in the request by user
-    :return: state name to which the given city belongs
-    """
-    try:
-        if len(city.city_name) > 0 and city.city_name.isalpha():
-            correct_city_name = check_spelling(city.city_name)
-            geo_locator = Nominatim(user_agent="geoapiExercises")
-            location = geo_locator.geocode(correct_city_name, addressdetails=True)
-            # print(location.raw)
-            return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "state is retrieved successfully",
-                                                                         "city": correct_city_name[1],
-                                                                         "state": location.raw['address']['state']})
-        else:
-            raise KeyError
-    except KeyError as exception:
-        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content="give a proper city name")
-    except Exception as exception:
-        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN,
-                            content=f"error occurred due to {exception.__str__()}")
-
-
-@router.post("/state-by-location/")
-def get_state_by_location(location: Location):
-    """
-    The function is used to retrieve the state for given latitude and longitude (as one string separated using comma) by
-    using Nominatim to get the appropriate state else appropriate exception will be thrown
-    :param location: location object with latitude_longitude as data member which is provided in the request by the user
-    :return: state name to which the given coordinates belong
-    """
-    try:
-        geo_locator = Nominatim(user_agent="geoapiExercises")
-        location = geo_locator.reverse(location.latitude_longitude, exactly_one=True)
-        return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "state is retrieved successfully",
-                                                                     "state": location.raw['address']['state']})
-    except Exception as exception:
-        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN,
-                            content=f"error occurred due to {exception.__str__()}")
-
-
-class FindStateView(APIView):
+class FindState:
     """
     View handles the request to know the state of the given city name
     """
 
-    def get(self, request):
-        """
-        Google maps library is used to send the request to geocoding api to get the name of the
-        state to which the given city (name) belongs
-        :param request:- city name whose state name is to be found
-        :return:- state name else appropriate exception will be thrown in the response
-        """
-        gmaps = googlemaps.Client(key="api_key_goes_here")
-        location = gmaps.geocode(request.data['city'])
-        print(location)
-        return Response(location.raw['address']['state'])
-
-    def post(self, request):
+    @staticmethod
+    def get_state_by_city(city_name):
         """
         Geopy library is used to send the request to Nominatim to get the state name of the given city name and
         then output is converted to raw text to get the state name only
-        :param request:- city name whose state is to be found
+        :param city_name:- city name whose state is to be found
         :return:- state name else appropriate exception will be thrown in the response
         """
         try:
-            correct_city_name = check_spelling(request.data['city'])
-            geo_locator = Nominatim(user_agent="geoapiExercises")
-            location = geo_locator.geocode(correct_city_name, addressdetails=True)
-            print(location.raw)
-            return Response(location.raw['address']['state'])
+            if len(city_name) == 0:
+                raise KeyError
+            else:
+                correct_city_name = check_spelling(city_name)
+                geo_locator = Nominatim(user_agent="geoapiExercises")
+                location = geo_locator.geocode(correct_city_name, addressdetails=True, exactly_one=True)
+                return location.raw['address']['state']
+        except KeyError as exception:
+            return "Please enter some city name"
         except Exception as exception:
-            return JsonResponse({"message": f"error occurred due to {exception.__str__()}"},
-                                status=status.HTTP_400_BAD_REQUEST)
+            return f"error occurred due to {exception.__str__()}"
+
+    @staticmethod
+    def get_state_by_coordinates(latitude, longitude):
+        try:
+            if len(latitude) == 0 or len(longitude) == 0:
+                raise KeyError
+            else:
+                coordinates = latitude + "," + longitude
+                geo_locator = Nominatim(user_agent="geoapiExercises")
+                location = geo_locator.reverse(coordinates, exactly_one=True)
+                return location.raw['address']['state']
+        except KeyError as exception:
+            return "Please enter valid coordinates"
+        except Exception as exception:
+            return f"error occurred due to {exception.__str__()}"
